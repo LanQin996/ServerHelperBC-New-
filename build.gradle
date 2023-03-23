@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group 'github.kasuminova'
+version '1.1.0'
+
+repositories {
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    maven {
+        url 'https://maven.aliyun.com/repository/central'
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'com.google.code.gson:gson:2.8.2'
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
+    implementation 'org.xerial.snappy:snappy-java:1.1.9.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archivesBaseName = 'ServerHelperPlugin'//基本的文件名
+
+    //打包依赖包
+    from {
+        (configurations.runtimeClasspath).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}

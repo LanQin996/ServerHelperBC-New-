@@ -1,0 +1,9 @@
+ServerHelperBC:
+  # 插件服务器监听的 IP 地址
+  IP: "0.0.0.0"
+  # 插件服务器监听的端口
+  Port: 20000
+  # 子服 AccessToken
+  SubServerAccessToken: "123abc"
+  # 机器人、管理端 AccessToken
+  ManagerAccessToken: "abc123"

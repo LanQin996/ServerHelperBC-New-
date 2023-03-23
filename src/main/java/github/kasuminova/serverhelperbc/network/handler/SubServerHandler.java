@@ -1,0 +1,52 @@
+package github.kasuminova.serverhelperbc.network.handler;
+
+import github.kasuminova.network.message.servercmd.CmdExecFailedMessage;
+import github.kasuminova.network.message.servercmd.CmdExecResultsMessage;
+import github.kasuminova.serverhelperbc.ServerHelperBC;
+import io.netty.channel.ChannelHandlerContext;
+
+public class SubServerHandler extends AbstractHandler<SubServerHandler> {
+    private final String clientId;
+
+    public SubServerHandler(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Override
+    protected void onRegisterMessages() {
+        registerMessage(CmdExecFailedMessage.class, SubServerHandler::forwardCmdExecFailedMessage);
+        registerMessage(CmdExecResultsMessage.class, SubServerHandler::forwardCmdExecResultMessage);
+    }
+
+    private static void forwardCmdExecResultMessage(SubServerHandler handler, CmdExecResultsMessage message) {
+        ChannelHandlerContext ctx = ServerHelperBC.CONNECTED_MANAGERS.get(message.sender);
+        if (ctx == null) {
+            ServerHelperBC.logger.warn(
+                    "接收到向名为 " + message.sender + " 的管理端转发数据包，但是当前并未找到对应名称的管理端，已丢弃数据包。");
+        } else {
+            ctx.writeAndFlush(message);
+        }
+    }
+
+    private static void forwardCmdExecFailedMessage(SubServerHandler handler, CmdExecFailedMessage message) {
+        ChannelHandlerContext ctx = ServerHelperBC.CONNECTED_MANAGERS.get(message.sender);
+        if (ctx == null) {
+            ServerHelperBC.logger.warn(
+                    "接收到向名为 " + message.sender + " 的管理端转发数据包，但是当前并未找到对应名称的管理端，已丢弃数据包。");
+        } else {
+            ctx.writeAndFlush(message);
+        }
+    }
+
+    @Override
+    protected void channelActive0() {
+        ServerHelperBC.CONNECTED_SUB_SERVERS.put(clientId, ctx);
+        ServerHelperBC.logger.info("子服：IP:/" + clientIP + ", 名称：" + clientId + " 已连接至服务器。");
+    }
+
+    @Override
+    protected void channelInactive0() {
+        ServerHelperBC.CONNECTED_SUB_SERVERS.remove(clientId);
+        ServerHelperBC.logger.info("子服：IP:/" + clientIP + ", 名称：" + clientId + " 已连接至服务器。");
+    }
+}
