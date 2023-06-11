@@ -18,6 +18,10 @@ import net.md_5.bungee.event.EventHandler;
 public class EventListener implements Listener {
     @EventHandler
     public void onChat(ChatEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         String message = event.getMessage();
         String sender = event.getSender().toString();
         ProxiedPlayer player = ServerHelperBC.PROXY.getPlayer(event.getSender().toString());
@@ -65,12 +69,12 @@ public class EventListener implements Listener {
             ServerHelperBC.logger.info(String.format("%s 通过了白名单验证，准许进入. IP:%s",
                     userName, connection.getSocketAddress()));
         } else {
-            ServerHelperBC.logger.info(String.format("%s 不在服务器白名单中，断开连接。", userName));
+            ServerHelperBC.logger.info(String.format("%s 不在服务器白名单中，断开连接. IP:%s", userName, connection.getSocketAddress()));
             event.setCancelReason(new ComponentBuilder()
                     .color(ChatColor.RED)
                     .append("[新星工程防御系统]你不在服务器的白名单中，请加入 QQ 群 471614563 并在")
-                    .bold(true).append("群内")
-                    .reset().color(ChatColor.RED).append("发送").append("\n")
+                    .bold(true).append("群内").reset()
+                    .color(ChatColor.RED).append("发送").append("\n")
                     .color(ChatColor.YELLOW).append("#申请白名单 ").append(userName).append("\n")
                     .color(ChatColor.AQUA).append("若输入有误或出现故障等问题，请私聊服主 QQ：2755271615")
                     .create()

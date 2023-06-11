@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'github.kasuminova'
-version '1.1.0'
+version '1.2.0'
 
 repositories {
     maven {
@@ -30,7 +30,7 @@ test {
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archivesBaseName = 'ServerHelperPlugin'//基本的文件名
+    archivesBaseName = 'ServerHelperBC'//基本的文件名
 
     //打包依赖包
     from {

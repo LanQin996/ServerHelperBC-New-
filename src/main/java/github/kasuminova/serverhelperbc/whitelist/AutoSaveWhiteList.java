@@ -3,7 +3,6 @@ package github.kasuminova.serverhelperbc.whitelist;
 import github.kasuminova.network.message.whitelist.*;
 import github.kasuminova.serverhelperbc.ServerHelperBC;
 import github.kasuminova.serverhelperbc.util.ColouredLogger;
-import github.kasuminova.serverhelperbc.util.MiscUtils;
 import io.netty.util.internal.ThrowableUtil;
 
 import java.io.File;
@@ -74,7 +73,7 @@ public class AutoSaveWhiteList implements SearchMethod {
         String userName = fullWhiteListInfo.getUserName();
 
         if (whiteList.containsKey(userName)) {
-            WhiteListUpdateResult result = get(userName, SEARCH_USERNAME);
+            WhiteListUpdateResult result = get(userName, SEARCH_ID);
             return new WhiteListUpdateResult(UpdateType.ADD, ResultCode.USERNAME_ALREADY_EXISTS, result.getFullWhiteListInfo());
         }
         if (whiteList.containsValue(id)) {
@@ -247,7 +246,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      * @return 更新后的信息，用户名或 QQ 不存在时返回失败信息
      */
     public WhiteListUpdateResult update(String oldName, String newName) {
-        String id = searchID(oldName, SearchMethod.SEARCH_USERNAME);
+        String id = searchID(oldName, SearchMethod.SEARCH_ID);
         if (id == null) return new WhiteListUpdateResult(UpdateType.UPDATE, ResultCode.ID_NOT_EXIST);
 
         FullWhiteListInfo oldInfo = fullWhiteListMap.get(id);
@@ -312,7 +311,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      */
     public String searchID(String key, int searchMethod) {
         switch (searchMethod) {
-            case SEARCH_USERNAME:
+            case SEARCH_ID:
                 return whiteList.get(key);
             case SEARCH_QQ:
                 return key;
@@ -330,7 +329,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      */
     public String searchIDRecycleBin(String key, int searchMethod) {
         switch (searchMethod) {
-            case SEARCH_USERNAME:
+            case SEARCH_ID:
                 return whiteListRecycleBin.get(key);
             case SEARCH_QQ:
                 return key;

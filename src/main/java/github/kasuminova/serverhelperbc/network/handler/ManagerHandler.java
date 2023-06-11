@@ -1,8 +1,15 @@
 package github.kasuminova.serverhelperbc.network.handler;
 
 import github.kasuminova.network.message.chatmessage.GroupChatMessage;
+import github.kasuminova.network.message.playercmd.KickMeMessage;
+import github.kasuminova.network.message.playercmd.PlayerCmdExecFailedMessage;
+import github.kasuminova.network.message.playercmd.PlayerCmdExecMessage;
+import github.kasuminova.network.message.protocol.HeartbeatMessage;
+import github.kasuminova.network.message.protocol.HeartbeatResponse;
 import github.kasuminova.network.message.servercmd.CmdExecFailedMessage;
 import github.kasuminova.network.message.servercmd.CmdExecMessage;
+import github.kasuminova.network.message.servercmd.CmdExecResultsMessage;
+import github.kasuminova.network.message.servercmd.GlobalCmdExecMessage;
 import github.kasuminova.network.message.serverinfo.OnlineGetMessage;
 import github.kasuminova.network.message.serverinfo.OnlinePlayerListMessage;
 import github.kasuminova.network.message.whitelist.*;
@@ -37,6 +44,65 @@ public class ManagerHandler extends AbstractHandler<ManagerHandler> {
         registerMessage(OnlineGetMessage.class, ManagerHandler::getOnlinePlayers);
 
         registerMessage(CmdExecMessage.class, ManagerHandler::executeCommand);
+        registerMessage(GlobalCmdExecMessage.class, ManagerHandler::executeGlobalCommand);
+        registerMessage(PlayerCmdExecMessage.class, ManagerHandler::executePlayerCommand);
+        registerMessage(KickMeMessage.class, ManagerHandler::kickPlayer);
+
+        registerMessage(HeartbeatMessage.class, (handler, message) -> heartbeatResponse());
+    }
+
+    private static void kickPlayer(ManagerHandler handler, KickMeMessage message) {
+        String userName = ServerHelperBC.whiteList.getUserName(message.id);
+        if (userName == null) {
+            handler.ctx.writeAndFlush(new CmdExecResultsMessage("BC", message.id, new String[]{"执行失败：未找到 QQ 所绑定的白名单。"}));
+            return;
+        }
+
+        ProxiedPlayer player = ServerHelperBC.PROXY.getPlayer(userName);
+        if (player == null) {
+            handler.ctx.writeAndFlush(new CmdExecResultsMessage("BC", userName, new String[]{"执行失败：玩家不在线。"}));
+            return;
+        }
+
+        player.disconnect(new ComponentBuilder().color(ChatColor.RED).append("你被踹出服务器力！").create());
+
+        handler.ctx.writeAndFlush(new CmdExecResultsMessage("BC", message.id, new String[]{userName + " 被踹出服务器力！"}));
+        ServerHelperBC.PROXY.broadcast(new ComponentBuilder()
+                .append(userName + " 被踹出服务器力！").color(ChatColor.GOLD)
+                .create());
+    }
+
+    private static void executeGlobalCommand(ManagerHandler handler, GlobalCmdExecMessage message) {
+        ServerHelperBC.CONNECTED_SUB_SERVERS.forEach((serverName, ctx) ->
+                ctx.writeAndFlush(new CmdExecMessage(serverName, message.sender, message.cmd)));
+    }
+
+    private static void executePlayerCommand(ManagerHandler handler, PlayerCmdExecMessage message) {
+        String playerName = ServerHelperBC.whiteList.getUserName(message.playerName);
+        if (playerName == null) {
+            handler.ctx.writeAndFlush(
+                    new PlayerCmdExecFailedMessage(message.playerName, message.serverName, message.sender, "执行错误：找不到此 QQ 绑定的白名单。"));
+            return;
+        }
+
+        ProxiedPlayer player = ServerHelperBC.PROXY.getPlayer(playerName);
+        if (player == null || player.getServer() == null) {
+            handler.ctx.writeAndFlush(
+                    new PlayerCmdExecFailedMessage(message.playerName, message.serverName, message.sender, "执行错误：" + playerName + " 不在线。"));
+            return;
+        }
+
+        Server server = player.getServer();
+        String serverName = server.getInfo().getName().toUpperCase();
+        ChannelHandlerContext ctx = ServerHelperBC.CONNECTED_SUB_SERVERS.get(serverName);
+        if (ctx == null) {
+            handler.ctx.writeAndFlush(
+                    new PlayerCmdExecFailedMessage(message.playerName, message.serverName, message.sender, "执行错误：未找到目标服务器：" + serverName));
+        } else {
+            message.serverName = serverName;
+            message.playerName = playerName;
+            ctx.writeAndFlush(message);
+        }
     }
 
     private static void executeCommand(ManagerHandler handler, CmdExecMessage message) {
@@ -81,7 +147,7 @@ public class ManagerHandler extends AbstractHandler<ManagerHandler> {
     private static void updateWhiteList(ManagerHandler handler, WhiteListUpdateMessage message) {
         ServerHelperBC.logger.info("Received WhiteListUpdateMessage");
         switch (message.searchMethod) {
-            case SearchMethod.SEARCH_USERNAME:
+            case SearchMethod.SEARCH_ID:
                 handler.ctx.writeAndFlush(ServerHelperBC.whiteList.update(
                         message.oldName, message.newName));
                 break;
@@ -123,4 +189,10 @@ public class ManagerHandler extends AbstractHandler<ManagerHandler> {
         ServerHelperBC.logger.info(
                 "管理端：IP:/" + clientIP + ", ID：" + clientId + " 已断开连接。");
     }
+
+    private void heartbeatResponse() {
+        ctx.writeAndFlush(new HeartbeatResponse());
+    }
+
+
 }
