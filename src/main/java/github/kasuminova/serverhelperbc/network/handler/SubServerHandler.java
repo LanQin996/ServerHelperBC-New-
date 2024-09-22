@@ -5,8 +5,10 @@ import github.kasuminova.network.message.protocol.HeartbeatMessage;
 import github.kasuminova.network.message.protocol.HeartbeatResponse;
 import github.kasuminova.network.message.servercmd.CmdExecFailedMessage;
 import github.kasuminova.network.message.servercmd.CmdExecResultsMessage;
+import github.kasuminova.network.message.serverinfo.ModListMessage;
 import github.kasuminova.serverhelperbc.ServerHelperBC;
 import io.netty.channel.ChannelHandlerContext;
+import net.md_5.bungee.api.ServerPing;
 
 public class SubServerHandler extends AbstractHandler<SubServerHandler> {
     private final String clientId;
@@ -20,6 +22,7 @@ public class SubServerHandler extends AbstractHandler<SubServerHandler> {
         registerMessage(CmdExecFailedMessage.class, SubServerHandler::forwardCmdExecFailedMessage);
         registerMessage(CmdExecResultsMessage.class, SubServerHandler::forwardCmdExecResultMessage);
         registerMessage(PlayerCmdExecFailedMessage.class, SubServerHandler::forwardPlayerCmdExecFailedMessage);
+        registerMessage(ModListMessage.class, SubServerHandler::dispatchForgeModList);
 
         registerMessage(HeartbeatMessage.class, (handler, message) -> heartbeatResponse());
     }
@@ -52,6 +55,14 @@ public class SubServerHandler extends AbstractHandler<SubServerHandler> {
         } else {
             ctx.writeAndFlush(message);
         }
+    }
+
+    private static void dispatchForgeModList(SubServerHandler handler, ModListMessage message) {
+        ServerPing.ModInfo modInfo = new ServerPing.ModInfo();
+        modInfo.setModList(message.getModList().stream()
+                .map(item -> new ServerPing.ModItem(item.getModID(), item.getVersion()))
+                .toList());
+        ServerHelperBC.modInfoCache = modInfo;
     }
 
     @Override

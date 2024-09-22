@@ -1,6 +1,8 @@
 package github.kasuminova.network.message.whitelist;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class WhiteListInfo implements Serializable {
@@ -12,6 +14,15 @@ public class WhiteListInfo implements Serializable {
         this.userName = userName;
         this.id = id;
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public WhiteListInfo(ResultSet resultSet) throws SQLException {
+        this.userName = resultSet.getString("userName");
+        this.id = resultSet.getLong("id");
+        this.lastUpdateTime = resultSet.getTimestamp("lastUpdateTime").getTime();
+        if (!resultSet.next()) {
+            resultSet.close();
+        }
     }
 
     public long getId() {

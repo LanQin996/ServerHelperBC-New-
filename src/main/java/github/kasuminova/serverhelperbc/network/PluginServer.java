@@ -16,8 +16,8 @@ public class PluginServer {
 
     public void start(String ip, int port) throws Exception {
         ServerBootstrap bootstrap = new ServerBootstrap();
-        boss = new NioEventLoopGroup(4);
-        work = new NioEventLoopGroup(2);
+        boss = new NioEventLoopGroup(4, Thread.ofVirtual().factory());
+        work = new NioEventLoopGroup(2, Thread.ofVirtual().factory());
 
         bootstrap.group(boss, work)
                 .channel(NioServerSocketChannel.class)

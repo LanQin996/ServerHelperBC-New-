@@ -6,7 +6,7 @@ public class MiscUtils {
      * @param str 字符串
      * @return 当全为数字时返回 true，否则返回 false
      */
-    public static Boolean isNum(String str) {
+    public static boolean isNum(String str) {
         return str.matches("[0-9]+");
     }
 }

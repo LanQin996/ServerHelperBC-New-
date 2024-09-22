@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 自动维护本地文件的一个白名单系统。
  * TODO 计划重写部分逻辑（屎山）
  */
-public class AutoSaveWhiteList implements SearchMethod {
+public class FileWhiteList implements WhiteList, SearchMethod {
     private final File whiteListFile;
     private final File whiteListRecycleBinFile;
     private final ColouredLogger logger;
@@ -52,7 +52,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      *
      * @param dataFolder 数据文件夹，该文件夹下会创建 whitelist.json 和 whitelist_removed.json 两个文件
      */
-    public AutoSaveWhiteList(File dataFolder) {
+    public FileWhiteList(File dataFolder) {
         this.logger = ServerHelperBC.logger;
         this.whiteListFile = new File(dataFolder.getPath() + File.separator + "whitelist.json");
         this.whiteListRecycleBinFile = new File(dataFolder.getPath() + File.separator + "whitelist_recycle_bin.json");
@@ -68,6 +68,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      * @param fullWhiteListInfo 白名单信息
      * @return 添加成功返回添加的白名单信息，用户名被其他 QQ 绑定或当前 QQ 已绑定用户名时返回错误信息和冲突的白名单信息
      */
+    @Override
     public WhiteListUpdateResult add(FullWhiteListInfo fullWhiteListInfo) {
         String id = fullWhiteListInfo.getIdAsString();
         String userName = fullWhiteListInfo.getUserName();
@@ -126,6 +127,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      * @param removeRecycleBin 是否删除回收站内的白名单而不是当前白名单
      * @return 删除成功返回 ResultCode.SUCCESS，用户名或 QQ 不存在时返回错误信息
      */
+    @Override
     public WhiteListUpdateResult remove(String key, int searchMethod, boolean removeRecycleBin) {
         if (removeRecycleBin) {
             return removeRecycleBin(key, searchMethod);
@@ -165,7 +167,7 @@ public class AutoSaveWhiteList implements SearchMethod {
             fullWhiteListRecycleBinMap.put(id, info);
             fullWhiteListRecycleBin.setLastUpdateTimeNow();
 
-            return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.SUCCESS);
+            return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.SUCCESS, oldInfo);
         } else {
             return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.USERNAME_NOT_EXIST);
         }
@@ -189,7 +191,7 @@ public class AutoSaveWhiteList implements SearchMethod {
             fullWhiteListRecycleBinMap.remove(id);
             fullWhiteListRecycleBin.setLastUpdateTimeNow();
 
-            return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.SUCCESS);
+            return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.SUCCESS, info);
         } else {
             return new WhiteListUpdateResult(UpdateType.REMOVE, ResultCode.USERNAME_NOT_EXIST);
         }
@@ -202,6 +204,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      * @param searchMethod 搜索方式
      * @return 白名单信息，不存在则返回失败信息
      */
+    @Override
     public WhiteListUpdateResult get(String key, int searchMethod) {
         String id = searchID(key, searchMethod);
         if (id == null) return new WhiteListUpdateResult(UpdateType.GET, ResultCode.ID_NOT_EXIST);
@@ -233,6 +236,7 @@ public class AutoSaveWhiteList implements SearchMethod {
      * @param id QQ
      * @return 对应的用户名，如果无则返回 null
      */
+    @Override
     public String getUserName(String id) {
         FullWhiteListInfo fullWhiteListInfo = fullWhiteListMap.get(id);
         return fullWhiteListInfo == null ? null : fullWhiteListInfo.getUserName();
@@ -389,6 +393,7 @@ public class AutoSaveWhiteList implements SearchMethod {
 
         logger.info("Waiting for maintainTask shutdown...");
         try {
+            automaticTask.interrupt();
             automaticTask.join(3000);
         } catch (IllegalArgumentException | InterruptedException ignored) {
         }
@@ -413,7 +418,6 @@ public class AutoSaveWhiteList implements SearchMethod {
                 try {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
-                    logger.warn(ThrowableUtil.stackTraceToString(e));
                     break;
                 }
             }

@@ -5,6 +5,7 @@ import github.kasuminova.serverhelperbc.ServerHelperBC;
 import github.kasuminova.serverhelperbc.util.ConstPool;
 import github.kasuminova.serverhelperbc.util.MiscUtils;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -43,7 +44,7 @@ public class EventListener implements Listener {
         ServerInfo server = event.getTarget();
         ProxiedPlayer player = event.getPlayer();
 
-        if (!server.getName().equals("lobby") && server.getPlayers().size() >= 15) {
+        if (!server.getName().equals("lobby") && server.getPlayers().size() >= ServerHelperBC.config.getSubServerPlayerLimit()) {
             if (!player.hasPermission("serverhelper.bypassplayerlimit")) {
                 if (player.getServer() == null) {
                     player.connect(ServerHelperBC.PROXY.getServerInfo("lobby"));

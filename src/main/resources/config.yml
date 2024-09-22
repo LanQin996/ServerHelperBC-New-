@@ -7,3 +7,19 @@ ServerHelperBC:
   SubServerAccessToken: "123abc"
   # 机器人、管理端 AccessToken
   ManagerAccessToken: "abc123"
+  # 大区玩家上限数量（主城除外）
+  SubServerPlayerLimit: 20
+  # 服务器 MOTD，{Hitokoto} 为占位符，可替换为随机一言。
+  Motd: '#50eaff-ff66ff-ff6633NovaEngineering - World —— 欢迎来到 新星工程：世界！\n&7&o{Hitokoto}'
+  # 白名单配置
+  WhiteList:
+    # 是否使用 MySQL 数据库，false 则使用本地 JSON 存储。
+    UseMySQL: false
+    # MySQL 数据库 IP
+    Address: "127.0.0.1"
+    # MySQL 数据库端口
+    Port: 3306
+    # MySQL 数据库用户名
+    Username: "root"
+    # MySQL 数据库密码
+    Password: "123456"
