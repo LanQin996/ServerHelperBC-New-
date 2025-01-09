@@ -7,6 +7,8 @@ ServerHelperBC:
   SubServerAccessToken: "i12.21"
   # 机器人、管理端 AccessToken
   ManagerAccessToken: "i12.21"
+  # 群聊消息同步开关
+  ToGroupMessage: false
   # 大区玩家上限数量（主城除外）
   SubServerPlayerLimit: 15
   # 服务器 MOTD，{Hitokoto} 为占位符，可替换为随机一言。

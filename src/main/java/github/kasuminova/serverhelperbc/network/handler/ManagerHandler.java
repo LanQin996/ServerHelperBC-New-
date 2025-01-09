@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import java.util.List;
 
 public class ManagerHandler extends AbstractHandler<ManagerHandler> {
     private final String clientId;
+    public static final Configuration DEFAULT_CONFIG = new Configuration();
 
     public ManagerHandler(String clientId) {
         this.clientId = clientId;
@@ -123,15 +125,15 @@ public class ManagerHandler extends AbstractHandler<ManagerHandler> {
 
     private static void sendGameChatMessage(ManagerHandler handler, GroupChatMessage message) {
         String userName = ServerHelperBC.whiteList.getUserName(String.valueOf(message.id));
-        if (userName != null) {
-            //示例：『群聊消息』Kasumi_Nova: 哼哼，啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊
-            BaseComponent[] chatMessage = new ComponentBuilder()
-                    .append("『群聊消息』").color(ChatColor.GOLD)
-                    .append(userName).color(ChatColor.AQUA)
-                    .append(": ").append(message.message).color(ChatColor.GRAY)
-                    .create();
-
-            ServerHelperBC.PROXY.broadcast(chatMessage);
+        if (DEFAULT_CONFIG.get("ServerHelperBC.ToGroupMessage",true)){
+            if (userName != null) {
+                BaseComponent[] chatMessage = new ComponentBuilder()
+                        .append("『群聊消息』").color(ChatColor.GOLD)
+                        .append(userName).color(ChatColor.AQUA)
+                        .append(": ").append(message.message).color(ChatColor.GRAY)
+                        .create();
+                ServerHelperBC.PROXY.broadcast(chatMessage);
+            }
         }
     }
 

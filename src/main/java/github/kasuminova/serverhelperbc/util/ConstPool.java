@@ -5,8 +5,10 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.config.Configuration;
 
 public class ConstPool {
+    public static final Configuration DEFAULT_CONFIG = new Configuration();
     public static final BaseComponent[] DISABLED_COMMAND = new ComponentBuilder()
             .color(ChatColor.RED)
             .append("命令已经被取消.因为你输入了服务器禁用的命令！")
@@ -14,7 +16,7 @@ public class ConstPool {
 
     public static final BaseComponent[] SERVER_PLAYER_LIMITED_MSG = new ComponentBuilder()
             .color(ChatColor.RED).bold(true)
-            .append("此区已经达到人数上限 15 人，请稍后进入！")
+            .append("此区已经达到人数上限" + DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit") + " 人，请稍后进入！")
             .append("\n")
             .color(ChatColor.AQUA).bold(true)
             .append("开通 云动/云涌/云震/云殇/云落 VIP 可以绕过人数限制，请打开 VIP 菜单查看~")
@@ -31,13 +33,13 @@ public class ConstPool {
     public static final Title SERVER_PLAYER_LIMITED_TITLE = ProxyServer.getInstance().createTitle()
             .title(new ComponentBuilder()
                     .color(ChatColor.RED).bold(true)
-                    .append("此区已经达到人数上限 15 人，请稍后进入！")
+                    .append("此区已经达到人数上限" + DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit") + "人，请稍后进入！")
                     .create())
             .subTitle(new ComponentBuilder()
                     .color(ChatColor.AQUA).bold(true)
                     .append("开通 云动/云涌/云震/云殇/云落 可以绕过人数限制，请打开 VIP 菜单查看~")
                     .create())
-            .fadeIn(15).stay(15).fadeOut(15);
+            .fadeIn(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit")).stay(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit")).fadeOut(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit"));
 
     public static final Title SERVER_PLAYER_LIMITED_JOIN_TITLE = ProxyServer.getInstance().createTitle()
             .title(new ComponentBuilder()
@@ -48,6 +50,6 @@ public class ConstPool {
                     .color(ChatColor.GREEN).bold(true)
                     .append("感谢支持服务器~")
                     .create())
-            .fadeIn(15).stay(15).fadeOut(15);
+            .fadeIn(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit")).stay(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit")).fadeOut(DEFAULT_CONFIG.getInt("ServerHelperBC.SubServerPlayerLimit"));
 
 }
