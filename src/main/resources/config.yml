@@ -4,13 +4,13 @@ ServerHelperBC:
   # 插件服务器监听的端口
   Port: 20000
   # 子服 AccessToken
-  SubServerAccessToken: "123abc"
+  SubServerAccessToken: "i12.21"
   # 机器人、管理端 AccessToken
-  ManagerAccessToken: "abc123"
+  ManagerAccessToken: "i12.21"
   # 大区玩家上限数量（主城除外）
-  SubServerPlayerLimit: 20
+  SubServerPlayerLimit: 15
   # 服务器 MOTD，{Hitokoto} 为占位符，可替换为随机一言。
-  Motd: '#50eaff-ff66ff-ff6633NovaEngineering - World —— 欢迎来到 新星工程：世界！\n&7&o{Hitokoto}'
+  Motd: '&bCloud Dream &f- &a云梦阁！\n&7&o{Hitokoto}'
   # 白名单配置
   WhiteList:
     # 是否使用 MySQL 数据库，false 则使用本地 JSON 存储。

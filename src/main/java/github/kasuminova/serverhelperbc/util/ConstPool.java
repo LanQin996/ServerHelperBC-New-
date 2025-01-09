@@ -17,7 +17,7 @@ public class ConstPool {
             .append("此区已经达到人数上限 15 人，请稍后进入！")
             .append("\n")
             .color(ChatColor.AQUA).bold(true)
-            .append("开通 行星/恒星/超新星/宸 VIP 可以绕过人数限制，请打开 VIP 菜单查看~")
+            .append("开通 云动/云涌/云震/云殇/云落 VIP 可以绕过人数限制，请打开 VIP 菜单查看~")
             .create();
 
     public static final BaseComponent[] SERVER_PLAYER_LIMITED_JOIN_MSG = new ComponentBuilder()
@@ -35,7 +35,7 @@ public class ConstPool {
                     .create())
             .subTitle(new ComponentBuilder()
                     .color(ChatColor.AQUA).bold(true)
-                    .append("开通 行星/恒星/超新星/宸 VIP 可以绕过人数限制，请打开 VIP 菜单查看~")
+                    .append("开通 云动/云涌/云震/云殇/云落 可以绕过人数限制，请打开 VIP 菜单查看~")
                     .create())
             .fadeIn(15).stay(15).fadeOut(15);
 

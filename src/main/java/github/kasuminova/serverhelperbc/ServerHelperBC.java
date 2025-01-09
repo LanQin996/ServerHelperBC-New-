@@ -51,7 +51,7 @@ public class ServerHelperBC extends Plugin {
     @Override
     public void onLoad() {
         logger = new ColouredLogger(
-                ConsoleColor.formatColor(ConsoleColor.BLUE, "[新星工程：辅助处理器] "),
+                ConsoleColor.formatColor(ConsoleColor.BLUE, "[小云智脑] "),
                 getLogger()
         );
         instance = this;

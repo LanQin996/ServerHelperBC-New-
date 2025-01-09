@@ -15,9 +15,9 @@ public class ServerHelperBCConfig {
 
     private String ip = "0.0.0.0";
     private int port = 20000;
-    private String subServerAccessToken = "123abc";
-    private String managerAccessToken = "abc123";
-    private int subServerPlayerLimit = 20;
+    private String subServerAccessToken = "i12.21";
+    private String managerAccessToken = "i12.21";
+    private int subServerPlayerLimit = 15;
     private String motd = "";
 
     public void loadFormConfig(Configuration config) {
@@ -25,7 +25,7 @@ public class ServerHelperBCConfig {
         port = config.getInt("ServerHelperBC.Port", 20000);
         subServerAccessToken = config.getString("ServerHelperBC.SubServerAccessToken", "123abc");
         managerAccessToken = config.getString("ServerHelperBC.ManagerAccessToken", "abc123");
-        subServerPlayerLimit = config.getInt("ServerHelperBC.SubServerPlayerLimit", 20);
+        subServerPlayerLimit = config.getInt("ServerHelperBC.SubServerPlayerLimit", 15);
         motd = config.getString("ServerHelperBC.Motd", "#50eaff-ff66ff-ff6633NovaEngineering - World —— 欢迎来到 新星工程：世界！\n&7&o{Hitokoto}");
     }
 

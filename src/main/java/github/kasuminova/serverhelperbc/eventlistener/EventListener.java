@@ -1,12 +1,9 @@
 package github.kasuminova.serverhelperbc.eventlistener;
 
 import github.kasuminova.network.message.chatmessage.GameChatMessage;
-import github.kasuminova.network.message.whitelist.SearchMethod;
-import github.kasuminova.network.message.whitelist.UserInGroupQueryMessage;
 import github.kasuminova.serverhelperbc.ServerHelperBC;
 import github.kasuminova.serverhelperbc.util.ConstPool;
 import github.kasuminova.serverhelperbc.util.MiscUtils;
-import github.kasuminova.serverhelperbc.whitelist.FileWhiteList;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -47,10 +44,10 @@ public class EventListener implements Listener {
         ServerInfo server = event.getTarget();
         ProxiedPlayer player = event.getPlayer();
 
-        if (!server.getName().equals("lobby") && server.getPlayers().size() >= ServerHelperBC.config.getSubServerPlayerLimit()) {
+        if (!server.getName().equals("LOBBY") && server.getPlayers().size() >= ServerHelperBC.config.getSubServerPlayerLimit()) {
             if (!player.hasPermission("serverhelper.bypassplayerlimit")) {
                 if (player.getServer() == null) {
-                    player.connect(ServerHelperBC.PROXY.getServerInfo("lobby"));
+                    player.connect(ServerHelperBC.PROXY.getServerInfo("LOBBY"));
                 } else {
                     event.setCancelled(true);
                 }
@@ -69,16 +66,14 @@ public class EventListener implements Listener {
         String userName = connection.getName();
 
         ServerHelperBC.logger.info(String.format("%s 尝试进入服务器，正在被检查...", userName));
-        var whiteList = ServerHelperBC.whiteList;
-        var id = whiteList.searchID(userName, SearchMethod.SEARCH_ID);
-        if (whiteList.isInList(userName) && UserInGroupQueryMessage.query(Long.parseLong(id))) {
+        if (ServerHelperBC.whiteList.isInList(userName)) {
             ServerHelperBC.logger.info(String.format("%s 通过了白名单验证，准许进入. IP:%s",
                     userName, connection.getSocketAddress()));
         } else {
             ServerHelperBC.logger.info(String.format("%s 不在服务器白名单中，断开连接. IP:%s", userName, connection.getSocketAddress()));
             event.setCancelReason(new ComponentBuilder()
                     .color(ChatColor.RED)
-                    .append("[新星工程防御系统] 你不在服务器的白名单中，或在任意的本服服务器群中，请加入 QQ 群 471614563 并在")
+                    .append("[小云智脑]你不在服务器的白名单中，请加入 QQ 群 1014113703 并在")
                     .bold(true).append("群内").reset()
                     .color(ChatColor.RED).append("发送").append("\n")
                     .color(ChatColor.YELLOW).append("#申请白名单 ").append(userName).append("\n")
