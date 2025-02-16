@@ -48,7 +48,13 @@ public class ManagerHandler extends AbstractHandler<ManagerHandler> {
         registerMessage(PlayerCmdExecMessage.class, ManagerHandler::executePlayerCommand);
         registerMessage(KickMeMessage.class, ManagerHandler::kickPlayer);
 
+        registerMessage(UserInGroupResultMessage.class, ManagerHandler::onUserInGroupQueryReturned);
+
         registerMessage(HeartbeatMessage.class, (handler, message) -> heartbeatResponse());
+    }
+
+    private static void onUserInGroupQueryReturned(ManagerHandler handler, UserInGroupResultMessage message) {
+        UserInGroupQueryMessage.BlockingHandler.completePartially(message.id, message.exists);
     }
 
     private static void kickPlayer(ManagerHandler handler, KickMeMessage message) {
