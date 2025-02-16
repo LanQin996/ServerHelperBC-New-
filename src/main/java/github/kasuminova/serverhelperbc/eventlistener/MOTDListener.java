@@ -59,7 +59,7 @@ public class MOTDListener implements Listener {
         serversCopy.values().forEach(value -> value.ping((result, error) -> {
             synchronized (serverCountCached) {
                 pingedServerCount++;
-                if (result != null) {
+                if (error == null) {
                     cachedOnlineServerCount++;
                 }
                 if (pingedServerCount == serversCopy.size()) {
